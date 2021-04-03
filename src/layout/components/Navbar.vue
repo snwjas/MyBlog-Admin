@@ -8,7 +8,7 @@
       <el-tooltip class="item" effect="dark" content="跳转到博客主页" placement="right-end">
         <a :href="options.url" target="_blank" class="to-front el-icon-s-promotion" />
       </el-tooltip>
-      <el-tooltip class="item" effect="dark" content="API开发文档" placement="right-end">
+      <el-tooltip v-if="isDev" class="item" effect="dark" content="API开发文档" placement="right-end">
         <a :href="`${baseUrl}/swagger-ui.html`" target="_blank" class="to-front el-icon-document" />
       </el-tooltip>
       <el-dropdown class="avatar-container" trigger="hover">
@@ -47,7 +47,10 @@ export default {
       'sidebar',
       'user',
       'options'
-    ])
+    ]),
+    isDev() {
+      return process.env.NODE_ENV === 'development'
+    }
   },
   methods: {
     toggleSideBar() {

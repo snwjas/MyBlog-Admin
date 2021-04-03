@@ -22,6 +22,12 @@ MyBlog后台前端项目。
 
 ## 快速开始
 
+安装依赖：
+
+```shell
+npm install
+```
+
 开发环境运行：
 
 ```shell
