@@ -50,11 +50,27 @@
     <el-row :gutter="20">
       <el-col :xs="24" :sm="18">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span class="cardName">近{{ days }}天的统计数据</span>
+          <div slot="header" class="clearfix" style="height: 28px;line-height: 28px">
+            <span class="cardName">每日数据统计</span>
+            <div class="cardName" style="float: right">
+              统计日期区间：
+              <el-date-picker
+                v-model="beginToEnd"
+                style="width: 260px"
+                size="mini"
+                type="daterange"
+                :picker-options="pickerOptions"
+                :clearable="false"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              />
+            </div>
           </div>
           <div class="cardContent">
-            <v-chart ref="dailyChart" :days="days" />
+            <v-chart :start-end="beginToEnd" />
           </div>
         </el-card>
       </el-col>
@@ -115,6 +131,7 @@
 <script>
 
 import { getCommonStatistics } from '@/api/statistics'
+import { parseTime } from '@/utils'
 
 export default {
   name: 'Dashboard',
@@ -123,7 +140,6 @@ export default {
   },
   data() {
     return {
-      days: 30,
       statistic: {
         blogCount: 0,
         commentCount: 0,
@@ -132,7 +148,48 @@ export default {
         totalVisitCount: 0,
         establishDaysCount: 0,
         birthday: ''
-      }
+      },
+      // 统计时间选择框选项
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近半个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 14)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近两个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 60)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      },
+      // [begin, end]
+      beginToEnd: [
+        parseTime(new Date(new Date(new Date().toLocaleDateString()).getTime()).getTime() - 30 * 24 * 60 * 60 * 1000, ''),
+        parseTime(new Date(new Date(new Date().toLocaleDateString()).getTime()).getTime(), '')
+      ]
     }
   },
   computed: {},

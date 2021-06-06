@@ -9,7 +9,6 @@
       :on-success="uploadSucceed"
       :before-upload="beforeUpload"
       :auto-upload="true"
-      :limit="10"
     >
       <i class="el-icon-upload" />
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>

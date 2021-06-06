@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+import store from '../store'
 
 // create an axios instance
 const service = axios.create({
@@ -42,18 +43,28 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
     if (res.status !== 200) {
+      let message = res.message || 'Error'
       if (res.status === 3001) { // 用户未登录
-        window.location.reload()
+        store.dispatch('user/setInfo', {})
+          .then(() => window.location.reload())
         return
+      } else if (res.status === 1001) { // 非法参数
+        if (res.data instanceof Object) {
+          for (const key in res.data) {
+            message = res.data[key]
+            break
+          }
+        } else {
+          message = res.data || res.message
+        }
       }
       Message({
-        message: res.message || 'Error',
+        message: message,
         type: 'error',
         duration: 3.6 * 1000
       })
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(new Error(message || 'Error'))
     } else {
       return res
     }

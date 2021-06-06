@@ -13,6 +13,8 @@
       @change="editing"
       @save="saveDraftMsgBox"
       @imgAdd="addImage"
+      @fullScreen="editorFullscreen"
+      @helpToggle="editorNotehelpToggle"
     />
     <div class="operation footer-toolbar">
       <el-button size="medium" @click="attachmentListDrawer=true">附件库</el-button>
@@ -104,6 +106,20 @@ export default {
     closePublishDrawer(done) {
       this.blogData = this.$refs.publishDrawer.getData()
       done()
+    },
+    editorFullscreen(status, value) {
+      const e = document.querySelector('.editor')
+      if (e) {
+        e.style['z-index'] = status ? 9999 : 1500
+      }
+    },
+    editorNotehelpToggle(status, value) {
+      setTimeout(function() {
+        const e = document.querySelector('.v-note-help-wrapper')
+        if (e) {
+          e.style['z-index'] = status ? 9999 : 1600
+        }
+      }, 36)
     },
     // editor中的上传图片功能
     addImage(pos, $file) {

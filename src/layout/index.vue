@@ -7,9 +7,6 @@
         <navbar />
       </div>
       <app-main />
-      <div class="footer">
-        Powered by <a href="http://snwjas.xyz" target="_blank">Myles.Yang</a>
-      </div>
     </div>
   </div>
 </template>
@@ -92,15 +89,5 @@ export default {
 
   .mobile .fixed-header {
     width: 100%;
-  }
-
-  .footer {
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    text-align: center;
-    color: #757575;
-    font-size: 13px;
-    a { color: #20a0ff; }
   }
 </style>
