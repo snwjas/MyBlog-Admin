@@ -47,14 +47,16 @@
       <el-checkbox-group v-model="deleteIds">
         <el-row v-loading="listLoading" :gutter="20">
           <el-col v-for="(attachment,index) in attachmentList" :key="attachment.id" :xs="6" :sm="4">
-            <div class="attachment-item" @click="batchOperation?batchDeleteChecked(index):openDetailDrawer(index)">
+            <div class="attachment-item">
               <el-checkbox v-if="batchOperation" :label="attachment.id" class="check-box" />
-              <v-image :src="baseUrl + attachment.thumbPath" :alt="attachment.name">
-                <div slot="error">
-                  <i v-if="attachment.mediaType.search('image') !== -1" class="el-icon-picture-outline" />
-                  <span v-else>{{ attachment.mediaType }}</span>
-                </div>
-              </v-image>
+              <div class="img" @click="batchOperation?batchDeleteChecked(index):openDetailDrawer(index)">
+                <v-image :src="baseUrl + attachment.thumbPath" :alt="attachment.name">
+                  <div slot="error">
+                    <i v-if="attachment.mediaType.search('image') !== -1" class="el-icon-picture-outline" />
+                    <span v-else>{{ attachment.mediaType }}</span>
+                  </div>
+                </v-image>
+              </div>
               <div class="name" :title="attachment.name">{{ attachment.name }}</div>
             </div>
           </el-col>
@@ -149,9 +151,8 @@ export default {
       this.currentIndex = index
       this.detailDrawer = true
       const data = this.attachmentList[index]
-      const _this = this
-      setTimeout(function() {
-        _this.$refs.detailDrawer.setData(data)
+      setTimeout(() => {
+        this.$refs.detailDrawer.setData(data)
       }, 200)
     },
     // 选择删除的附件
@@ -173,30 +174,26 @@ export default {
     getAttachmentList() {
       this.listLoading = true
       listAttachments(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.total = resp.data.total
-          this.attachmentList = resp.data.list
-        }
+        this.total = resp.data.total
+        this.attachmentList = resp.data.list
+        this.listLoading = false
+      }).catch(() => {
         this.listLoading = false
       })
     },
     // 获取所有文件类型
     getMediaTypeList() {
       listAllMediaTypes(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.mediaTypeList = resp.data
-        }
+        this.mediaTypeList = resp.data
       })
     },
     // 删除单个附件
     deleteAttachment() {
       const id = this.attachmentList[this.currentIndex].id
       deleteAttachment(id).then(resp => {
-        if (resp.status === 200) {
-          this.detailDrawer = false
-          this.$message.success(resp.message)
-          this.getAttachmentList()
-        }
+        this.detailDrawer = false
+        this.$message.success(resp.message)
+        this.getAttachmentList()
       })
     },
     // 批量删除附件
@@ -206,11 +203,9 @@ export default {
         return
       }
       deleteAttachments(this.deleteIds).then(resp => {
-        if (resp.status === 200) {
-          this.batchOperation = false
-          this.$message.success(resp.message)
-          this.getAttachmentList()
-        }
+        this.batchOperation = false
+        this.$message.success(resp.message)
+        this.getAttachmentList()
       })
     }
   }
@@ -241,6 +236,18 @@ export default {
 <style scoped lang="scss">
 .attachment-item {
   position: relative;
+
+  .img {
+    border-radius: 5px;
+    overflow: hidden;
+
+    &:hover {
+      cursor: pointer;
+      box-shadow: 0 3px 18px rgba(0, 0, 0, .2);
+      transform: translateY(-2px);
+      transition: all .3s;
+    }
+  }
 
   .name {
     padding: 6px;

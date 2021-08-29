@@ -212,9 +212,8 @@ export default {
     openSittingDrawer(index) {
       this.sittingDrawer = true
       const data = this.blogList[index]
-      const _this = this
-      setTimeout(function() {
-        _this.$refs.sittingDrawer.setData(data)
+      setTimeout(() => {
+        this.$refs.sittingDrawer.setData(data)
       }, 200)
     },
     // 把选择的附件url赋值给博客设置项的thumbnail
@@ -227,19 +226,15 @@ export default {
     getBlogList() {
       this.tableDataLoading = true
       listBlogs(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.total = resp.data.total
-          this.blogList = resp.data.list
-        }
+        this.total = resp.data.total
+        this.blogList = resp.data.list
         this.tableDataLoading = false
-      })
+      }).catch(() => { this.listLoading = false })
     },
     // 获取已经用的博客分类
     listUsedCategory() {
       listUsedCategory().then(resp => {
-        if (resp.status === 200) {
-          this.usedCategoryList = resp.data
-        }
+        this.usedCategoryList = resp.data
       })
     },
     // 改变博客状态
@@ -249,17 +244,13 @@ export default {
       // 回收站里的，可以删除博客
       if (status === 'RECYCLE') {
         deleteBlog(blog.id).then(resp => {
-          if (resp.status === 200) {
-            this.$message.success(resp.message)
-            this.getBlogList()
-          }
+          this.$message.success(resp.message)
+          this.getBlogList()
         })
       } else { // 已发表或草稿里的，放入回收站
         updateBlog({ id: blog.id, status: 'RECYCLE' }).then(resp => {
-          if (resp.status === 200) {
-            this.$message.success(resp.message)
-            this.getBlogList()
-          }
+          this.$message.success(resp.message)
+          this.getBlogList()
         })
       }
     },
@@ -267,21 +258,17 @@ export default {
     statusRecycleToPublish(index) {
       const blog = this.blogList[index]
       updateBlog({ id: blog.id, status: 'PUBLISHED' }).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.getBlogList()
-        }
+        this.$message.success(resp.message)
+        this.getBlogList()
       })
     },
     // 更新博客
     updateBlog() {
       const blogData = this.$refs.sittingDrawer.getData()
       updateBlog(blogData).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.sittingDrawer = false
-          this.getBlogList() // 刷新列表
-        }
+        this.$message.success(resp.message)
+        this.sittingDrawer = false
+        this.getBlogList() // 刷新列表
       })
     }
   }

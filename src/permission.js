@@ -16,21 +16,6 @@ router.beforeEach(async(to, from, next) => {
   // set page title
   document.title = getPageTitle(to.meta.title)
 
-  // get blog attr
-  const options = store.getters.options
-  if (Object.keys(options).length !== 0) {
-    next()
-  } else {
-    try {
-      await store.dispatch('option/getOptions')
-      next()
-    } catch (error) {
-      Message.error(error || '获取博客基本属性失败')
-      next(`/login?redirect=${to.path}`)
-      NProgress.done()
-    }
-  }
-
   // determine whether the user has logged in
   const isLogin = store.getters.isLogin
   if (isLogin) {
@@ -39,13 +24,18 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const userInfo = store.getters.user
-      if (Object.keys(userInfo).length !== 0) {
+      const hasUserInfo = Object.keys(store.getters.user).length !== 0
+      const hasOptions = Object.keys(store.getters.options).length !== 0
+      if (hasUserInfo && hasOptions) {
         next()
       } else {
         try {
-          // get user info
-          await store.dispatch('user/getInfo')
+          if (!hasUserInfo) {
+            await store.dispatch('user/getInfo')
+          }
+          if (!hasOptions) {
+            await store.dispatch('option/getOptions')
+          }
           next()
         } catch (error) {
           Message.error(error || 'Has Error')

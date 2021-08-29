@@ -1,4 +1,4 @@
-import { listAttributes } from '@/api/option'
+import { listAllOptions } from '@/api/option'
 
 // 博客设置
 
@@ -19,7 +19,7 @@ const actions = {
 
   getOptions({ commit }) {
     return new Promise((resolve, reject) => {
-      listAttributes().then(response => {
+      listAllOptions().then(response => {
         const { status, data } = response
 
         if (status !== 200) {

@@ -40,13 +40,11 @@ export default {
     updateAvatar(data) {
       const avatarUrl = this.baseUrl + data.path
       updateProfile({ avatar: avatarUrl }).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          const user = this.user
-          user.avatar = avatarUrl
-          this.$store.dispatch('user/setInfo', user)
-          this.selectAttachmentDrawer = false
-        }
+        this.$message.success(resp.message)
+        const user = this.user
+        user.avatar = avatarUrl
+        this.$store.dispatch('user/setInfo', user)
+        this.selectAttachmentDrawer = false
       })
     }
   }

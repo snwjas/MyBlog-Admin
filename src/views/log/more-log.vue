@@ -61,10 +61,8 @@ export default {
     },
     getLogList() {
       listLogs(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.logList = resp.data.list
-          this.total = resp.data.total
-        }
+        this.logList = resp.data.list
+        this.total = resp.data.total
       })
     },
     deleteLogs() {
@@ -73,11 +71,9 @@ export default {
         logIds.push(log.id)
       }
       deleteCommentsBatch(logIds).then(resp => {
-        if (resp.status === 200) {
-          this.getLogList()
-          this.$emit('delSucceed')
-          this.$message.success(resp.message)
-        }
+        this.getLogList()
+        this.$emit('delSucceed')
+        this.$message.success(resp.message)
       })
     }
   }

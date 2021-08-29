@@ -25,9 +25,7 @@ export default {
   methods: {
     getLogList() {
       listLogs(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.logList = resp.data.list
-        }
+        this.logList = resp.data.list
       })
     }
   }

@@ -41,3 +41,11 @@ export function addLink(data) {
     data
   })
 }
+
+export function updateLinkLogoParser(data) {
+  return request({
+    url: `${api_prefix}/update/parser`,
+    method: 'post',
+    data
+  })
+}

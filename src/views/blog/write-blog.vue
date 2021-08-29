@@ -78,9 +78,10 @@ export default {
         url: '',
         summary: '',
         thumbnail: '',
+        topRank: 0,
         category: { id: null, name: '' },
         tags: [],
-        allowComment: true
+        allowComment: 'ALLOWED_AUDITING'
       }
     }
   },
@@ -98,10 +99,9 @@ export default {
     },
     openPublishDrawer() {
       this.publishDrawer = true
-      const _this = this
-      setTimeout(function() {
-        _this.$refs.publishDrawer.setData(_this.blogData)
-      }, 300)
+      setTimeout(() => {
+        this.$refs.publishDrawer.setData(this.blogData)
+      }, 200)
     },
     closePublishDrawer(done) {
       this.blogData = this.$refs.publishDrawer.getData()
@@ -126,11 +126,9 @@ export default {
       const formdata = new FormData()
       formdata.append('file', $file)
       uploadAttachment(formdata).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          const url = this.baseUrl + resp.data.path
-          this.$refs.editor.$img2Url(pos, url)
-        }
+        this.$message.success(resp.message)
+        const url = this.baseUrl + resp.data.path
+        this.$refs.editor.$img2Url(pos, url)
       })
     },
     // 把选择的附件url赋值给博客设置项的thumbnail
@@ -141,9 +139,8 @@ export default {
     },
     openDetailDrawer(data) {
       this.attachmentDetailDrawer = true
-      const _this = this
-      setTimeout(function() {
-        _this.$refs.detailDrawer.setData(data)
+      setTimeout(() => {
+        this.$refs.detailDrawer.setData(data)
       }, 200)
     },
     // 保存草稿确认框
@@ -163,11 +160,9 @@ export default {
       if (blogId) {
         getBlog(blogId).then(resp => {
           this.blogData.id = blogId
-          if (resp.status === 200) {
-            this.blogData = resp.data
-          } else {
-            this.blogData = {}
-          }
+          this.blogData = resp.data
+        }).catch(() => {
+          this.blogData = {}
         })
       }
     },
@@ -175,20 +170,16 @@ export default {
     addBlog() {
       const blogData = this.$refs.publishDrawer.getData()
       addBlog(blogData).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.$router.push({ name: 'BlogList' })
-        }
+        this.$message.success(resp.message)
+        this.$router.push({ name: 'BlogList' })
       })
     },
     // 保存草稿
     saveDraft() {
       this.blogData.status = 'DRAFT'
       addBlog(this.blogData).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.$router.push({ name: 'BlogList' })
-        }
+        this.$message.success(resp.message)
+        this.$router.push({ name: 'BlogList' })
       })
     }
   }

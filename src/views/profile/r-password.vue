@@ -34,10 +34,8 @@ export default {
   methods: {
     updatePassword() {
       updatePassword(this.password).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.$refs['passwordForm'].resetFields()
-        }
+        this.$message.success(resp.message)
+        this.$refs['passwordForm'].resetFields()
       })
     }
   }

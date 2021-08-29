@@ -2,7 +2,7 @@
   <div class="content">
     <div style="margin-bottom: 16px">
       <a :href="baseUrl+data.path" target="_blank">
-        <v-image :src="baseUrl+data.thumbPath" :alt="data.name">
+        <v-image :src="baseUrl+data.thumbPath" :alt="data.name" class="thumbnail">
           <div slot="error">
             <i v-if="isImage" class="el-icon-picture-outline" style="font-size: 86px" />
             <span v-else>{{ data.mediaType }}</span>
@@ -106,11 +106,9 @@ export default {
     },
     updateAttachment() {
       updateAttachment({ id: this.data.id, name: this.data.name }).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.editing = false
-          this.$emit('updateSucceed')
-        }
+        this.$message.success(resp.message)
+        this.editing = false
+        this.$emit('updateSucceed')
       })
     }
   }
@@ -146,6 +144,11 @@ export default {
     line-height: 22px;
     word-break: break-all;
   }
+}
+
+.thumbnail {
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 </style>

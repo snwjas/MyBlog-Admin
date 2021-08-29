@@ -13,7 +13,7 @@
           <el-popover
             placement="top"
             trigger="click"
-            :content="ipLocation"
+            :content="ipLocation || item.ipAddress"
             width="300"
             @show="getIpLocation(item.ipAddress)"
           >
@@ -83,15 +83,13 @@ export default {
       return this.logTypes[type] || this.logTypes.COMMON
     },
     getIpLocation(ip) {
-      getIpLocation(ip)
-        .then(res => {
-          res.status === 'fail'
-            ? this.ipLocation = ip
-            : this.ipLocation = `${res.country} ${res.regionName} ${res.city} ${res.isp}`
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      getIpLocation(ip).then(res => {
+        res.status === 'fail'
+          ? this.ipLocation = ip
+          : this.ipLocation = `${res.country} ${res.regionName} ${res.city} ${res.isp}`
+      }).catch(err => {
+        console.error(err)
+      })
     }
   }
 }

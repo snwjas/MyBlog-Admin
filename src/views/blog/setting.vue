@@ -2,10 +2,10 @@
   <div class="drawer-content">
     <el-form ref="blogForm" label-position="top" :model="blogData" size="small">
       <el-form-item label="博客标题：" prop="title">
-        <el-input v-model="blogData.title" />
+        <el-input v-model="blogData.title" placeholder="请输入文章标题" />
       </el-form-item>
       <el-form-item label="博客路径：" prop="url">
-        <el-input v-model="blogData.url" />
+        <el-input v-model="blogData.url" placeholder="请输入文章访问路径，默认为文章标题" />
       </el-form-item>
       <el-form-item label="允许评论：" prop="allowComment">
         <el-radio-group v-model="blogData.allowComment">
@@ -44,18 +44,21 @@
             :value="tag.id"
           />
         </el-select>
+        <p class="input-tips">* 可以选择已有标签或输入新标签</p>
       </el-form-item>
       <el-form-item label="博客摘要：" prop="summary">
         <el-input v-model="blogData.summary" :rows="5" type="textarea" placeholder="不填写会自动生成" />
       </el-form-item>
-      <el-form-item label="博客缩图：" prop="thumbnail">
+      <el-form-item label="博客封面：" prop="thumbnail">
         <div @click="selectAttachment">
-          <v-image :src="blogData.thumbnail" class="thumbnail">
-            <div slot="error" class="placeholder">
-              <svg-icon icon-class="img-placeholder" class-name="icon" />
-              <div class="text">No Thumbnail</div>
-            </div>
-          </v-image>
+          <el-tooltip effect="dark" placement="top" content="点击选择封面图片">
+            <v-image :src="blogData.thumbnail" class="thumbnail">
+              <div slot="error" class="placeholder">
+                <svg-icon icon-class="img-placeholder" class-name="icon" />
+                <div class="text">No Thumbnail</div>
+              </div>
+            </v-image>
+          </el-tooltip>
         </div>
         <el-input v-model="blogData.thumbnail" clearable placeholder="请输入图片链接或选择图片" />
       </el-form-item>
@@ -84,7 +87,7 @@ export default {
         topRank: 0,
         category: { id: null, name: '' },
         tags: [],
-        allowComment: ''
+        allowComment: 'ALLOWED_AUDITING'
       },
       usedCategoryList: [],
       tagList: [],
@@ -167,6 +170,11 @@ export default {
   margin-bottom: 100px;
 
   .thumbnail {
+    margin-bottom: 5px;
+    border-radius: 5px;
+    overflow: hidden;
+    cursor: pointer;
+
     .placeholder {
       width: 100%;
       transition: all .5s;

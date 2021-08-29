@@ -12,7 +12,7 @@
       maxlength="1023"
       show-word-limit
     />
-    <span slot="footer" class="dialog-footer">
+    <span slot="footer">
       <el-button type="primary" size="small" @click="replyComments">回 复</el-button>
     </span>
   </el-dialog>
@@ -43,11 +43,9 @@ export default {
     replyComments() {
       const data = { blogId: this.comment.blogId, parentId: this.comment.id, content: this.content }
       replyComments(data).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.dialogVisible = false
-          this.replySucceed()
-        }
+        this.$message.success(resp.message)
+        this.dialogVisible = false
+        this.replySucceed()
       })
     }
   }

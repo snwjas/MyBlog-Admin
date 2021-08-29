@@ -34,10 +34,8 @@ export default {
       const user = { ...this.user }
       delete user.avatar
       updateProfile(user).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.$store.dispatch('user/setInfo', resp.data)
-        }
+        this.$message.success(resp.message)
+        this.$store.dispatch('user/setInfo', resp.data)
       })
     }
   }

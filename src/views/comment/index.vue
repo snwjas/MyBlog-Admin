@@ -91,9 +91,7 @@
                 type="primary"
                 size="mini"
                 @click="openReplyDialog(scope.$index)"
-              >
-                回复
-              </el-button>
+              >回复</el-button>
               <!-- 按钮 2 ：通过/回收站/删除-->
               <el-popconfirm
                 placement="top-start"
@@ -209,19 +207,15 @@ export default {
     getCommentList() {
       this.tableDataLoading = true
       listComments(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.total = resp.data.total
-          this.commentList = resp.data.list
-        }
+        this.total = resp.data.total
+        this.commentList = resp.data.list
         this.tableDataLoading = false
       })
     },
     // 获取已经用的博客分类
     listBlogTitle() {
       listAllTitles().then(resp => {
-        if (resp.status === 200) {
-          this.blogTitleList = resp.data
-        }
+        this.blogTitleList = resp.data
       })
     },
     // 改变博客状态
@@ -231,10 +225,8 @@ export default {
       // 回收站里的，可以删除
       if (status === 'RECYCLE') {
         deleteComments(comment.id).then(resp => {
-          if (resp.status === 200) {
-            this.$message.success(resp.message)
-            this.getCommentList()
-          }
+          this.$message.success(resp.message)
+          this.getCommentList()
         })
       } else {
         let s
@@ -248,21 +240,10 @@ export default {
           default: return
         }
         updateStatus(jsonObj2FormData({ id: comment.id, status: s })).then(resp => {
-          if (resp.status === 200) {
-            this.$message.success(resp.message)
-            this.getCommentList()
-          }
-        })
-      }
-    },
-    // 删除评论
-    deleteComments(commentId) {
-      deleteComments(commentId).then(resp => {
-        if (resp.status === 200) {
           this.$message.success(resp.message)
           this.getCommentList()
-        }
-      })
+        })
+      }
     },
     // 多选，批量操作
     multipleSelect(selection) {
@@ -281,11 +262,9 @@ export default {
       }
       updateStatusBatch(jsonObj2FormData({ ids: ids, status: this.multipleUpdatedStatus }))
         .then(resp => {
-          if (resp.status === 200) {
-            this.$message.success(resp.message)
-            this.multipleUpdatedStatus = null
-            this.getCommentList()
-          }
+          this.$message.success(resp.message)
+          this.multipleUpdatedStatus = null
+          this.getCommentList()
         })
     },
     // 批量删除评论
@@ -295,10 +274,8 @@ export default {
         ids.push(item.id)
       }
       deleteCommentsBatch(ids).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.getCommentList()
-        }
+        this.$message.success(resp.message)
+        this.getCommentList()
       })
     }
   }

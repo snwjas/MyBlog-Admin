@@ -102,33 +102,25 @@ export default {
     getTagList() {
       this.listLoading = true
       listAllTags().then(resp => {
-        if (resp.status === 200) {
-          this.tagList = resp.data
-        }
+        this.tagList = resp.data
         this.listLoading = false
-      })
+      }).catch(() => { this.listLoading = false })
     },
     // 删除分类
     deleteTag() {
       const id = this.tagList[this.currentOperationIndex].id
       deleteTag(id).then(resp => {
-        if (resp.status === 200) {
-          this.operationSuccess(resp.message)
-        }
+        this.operationSuccess(resp.message)
       })
     },
     addTag() {
       addTag(this.addOrUpdateData).then(resp => {
-        if (resp.status === 200) {
-          this.operationSuccess(resp.message)
-        }
+        this.operationSuccess(resp.message)
       })
     },
     updateTag() {
       updateTag(this.addOrUpdateData).then(resp => {
-        if (resp.status === 200) {
-          this.operationSuccess(resp.message)
-        }
+        this.operationSuccess(resp.message)
       })
     }
   }

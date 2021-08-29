@@ -53,7 +53,7 @@
           <div slot="header" class="clearfix" style="height: 28px;line-height: 28px">
             <span class="cardName">每日数据统计</span>
             <div class="cardName" style="float: right">
-              统计日期区间：
+              统计日期：
               <el-date-picker
                 v-model="beginToEnd"
                 style="width: 260px"

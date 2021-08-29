@@ -114,34 +114,26 @@ export default {
     getCategoryList() {
       this.tableDataLoading = true
       listCategory(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.total = resp.data.total
-          this.categoryList = resp.data.list
-        }
+        this.total = resp.data.total
+        this.categoryList = resp.data.list
         this.tableDataLoading = false
-      })
+      }).catch(() => { this.listLoading = false })
     },
     // 删除分类
     deleteCategory(index) {
       const id = this.categoryList[index].id
       deleteCategory(id).then(resp => {
-        if (resp.status === 200) {
-          this.operationSuccess(resp.message)
-        }
+        this.operationSuccess(resp.message)
       })
     },
     addCategory() {
       addCategory(this.addOrUpdateData).then(resp => {
-        if (resp.status === 200) {
-          this.operationSuccess(resp.message)
-        }
+        this.operationSuccess(resp.message)
       })
     },
     updateCategory() {
       updateCategory(this.addOrUpdateData).then(resp => {
-        if (resp.status === 200) {
-          this.operationSuccess(resp.message)
-        }
+        this.operationSuccess(resp.message)
       })
     }
   }

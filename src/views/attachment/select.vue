@@ -28,13 +28,15 @@
       <v-empty-data v-if="attachmentList.length===0" style="width: 100px" />
       <el-row v-loading="listLoading" :gutter="20">
         <el-col v-for="(attachment,index) in attachmentList" :key="attachment.id" :span="12">
-          <div class="attachment-item" @click="selected(index)">
-            <v-image :src="baseUrl + attachment.thumbPath" :alt="attachment.name">
-              <div slot="error">
-                <i v-if="attachment.mediaType.search('image') !== -1" class="el-icon-picture-outline" />
-                <span v-else>{{ attachment.mediaType }}</span>
-              </div>
-            </v-image>
+          <div class="attachment-item">
+            <div class="img" @click="selected(index)">
+              <v-image :src="baseUrl + attachment.thumbPath" :alt="attachment.name">
+                <div slot="error">
+                  <i v-if="attachment.mediaType.search('image') !== -1" class="el-icon-picture-outline" />
+                  <span v-else>{{ attachment.mediaType }}</span>
+                </div>
+              </v-image>
+            </div>
             <div class="name" :title="attachment.name">{{ attachment.name }}</div>
           </div>
         </el-col>
@@ -102,10 +104,10 @@ export default {
     getAttachmentList() {
       this.listLoading = true
       listAttachments(this.searchParams).then(resp => {
-        if (resp.status === 200) {
-          this.total = resp.data.total
-          this.attachmentList = resp.data.list
-        }
+        this.total = resp.data.total
+        this.attachmentList = resp.data.list
+        this.listLoading = false
+      }).catch(() => {
         this.listLoading = false
       })
     }
@@ -128,6 +130,18 @@ export default {
 <style scoped lang="scss">
 .attachment-item {
   position: relative;
+
+  .img {
+    border-radius: 5px;
+    overflow: hidden;
+
+    &:hover {
+      cursor: pointer;
+      box-shadow: 0 3px 18px rgba(0, 0, 0, .2);
+      transform: translateY(-2px);
+      transition: all .3s;
+    }
+  }
 
   .name {
     padding: 6px;

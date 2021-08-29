@@ -30,16 +30,12 @@ export default {
   width: 100%;
   padding-top: 56.25%;
   background-color: #ddd;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 5px;
   position: relative;
 
   .image {
     position: absolute;
     width: 100%;
     height: 100%;
-    border-radius: 5px;
     top: 0;
 
     .image-slot {

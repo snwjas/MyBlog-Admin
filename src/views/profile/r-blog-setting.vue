@@ -79,18 +79,14 @@ export default {
     },
     listAllOptions() {
       listAllOptions().then(resp => {
-        if (resp.status === 200) {
-          this.options = resp.data
-        }
+        this.options = resp.data
       })
     },
     updateOption() {
       updateOptions(this.updateOptions).then(resp => {
-        if (resp.status === 200) {
-          this.$message.success(resp.message)
-          this.listAllOptions()
-          this.$store.dispatch('option/getOptions')
-        }
+        this.$message.success(resp.message)
+        this.listAllOptions()
+        this.$store.dispatch('option/getOptions')
       })
     },
     checkUrl() {
