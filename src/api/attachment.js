@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { jsonObj2FormData } from '@/utils'
 
 const api_prefix = '/api/admin/attachment'
 
@@ -27,6 +28,14 @@ export function listAllMediaTypes() {
   })
 }
 
+// 获取所有文件分组
+export function listAllTeams() {
+  return request({
+    url: `${api_prefix}/list/team`,
+    method: 'get'
+  })
+}
+
 // 上传地址
 export const uploadUrl = `${process.env.VUE_APP_BASE_API}${api_prefix}/upload`
 
@@ -36,7 +45,7 @@ export function uploadAttachment(data) {
     url: `${api_prefix}/upload`,
     method: 'post',
     headers: { 'Content-Type': 'multipart/form-data' },
-    data
+    data: jsonObj2FormData(data)
   })
 }
 
@@ -65,5 +74,15 @@ export function deleteAttachments(data) {
     url: `${api_prefix}/delete`,
     method: 'delete',
     data
+  })
+}
+
+// 移动到分组
+export function updateTeam(data) {
+  return request({
+    url: `${api_prefix}/update/team`,
+    method: 'post',
+    headers: { 'Content-Type': 'multipart/form-data' },
+    data: jsonObj2FormData(data)
   })
 }

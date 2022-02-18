@@ -286,6 +286,7 @@ export default {
         if (this.logoType === 'api' && this.addOrUpdateData.url) {
           this.setUrlLogoParser()
         }
+        this.getLinkList()
       })
     }
   }

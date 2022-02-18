@@ -3,12 +3,18 @@
   <div>
     <div style="margin-bottom: 20px">
       <el-input
-        v-model="searchParams.name"
+        v-model="searchKeyword"
         placeholder="请输入关键词"
         clearable
         size="small"
         style="width:calc(100% - 120px);margin-right: 10px"
-      />
+        class="input-with-select"
+      >
+        <el-select slot="prepend" v-model="searchType" style="width: 80px;" default-first-option placeholder="">
+          <el-option label="名称" value="name" />
+          <el-option label="分组" value="team" />
+        </el-select>
+      </el-input>
       <el-button
         icon="el-icon-search"
         type="primary"
@@ -82,13 +88,14 @@ export default {
     return {
       searchParams: {
         current: 1,
-        pageSize: 6,
-        name: ''
+        pageSize: 6
       },
       total: 0,
       attachmentList: [],
       listLoading: false,
-      uploadDialog: false
+      uploadDialog: false,
+      searchType: 'name',
+      searchKeyword: ''
     }
   },
   created() {
@@ -103,7 +110,13 @@ export default {
     // 获取附件列表信息
     getAttachmentList() {
       this.listLoading = true
-      listAttachments(this.searchParams).then(resp => {
+      const params = { ...this.searchParams }
+      if (this.searchType === 'team') {
+        params['likeTeam'] = this.searchKeyword
+      } else {
+        params['name'] = this.searchKeyword
+      }
+      listAttachments(params).then(resp => {
         this.total = resp.data.total
         this.attachmentList = resp.data.list
         this.listLoading = false
@@ -123,6 +136,10 @@ export default {
   &:last-child {
     margin-bottom: 0;
   }
+}
+
+.input-with-select .el-input-group__prepend {
+  background-color: #fff;
 }
 
 </style>

@@ -118,6 +118,23 @@ export function param2Obj(url) {
 }
 
 /**
+ * URL参数拼接
+ * @param url e.g.https://www.baidu.com  https://www.baidu.com?a=1&
+ * @param data e.g.{b=2}
+ * @return {String}
+ */
+export function formatURL(url, data) {
+  let tmpURL = ''
+  for (const k in data) {
+    const value = data[k] !== undefined ? data[k] : ''
+    tmpURL += ('&' + k + '=' + encodeURIComponent(value))
+  }
+  const params = tmpURL ? tmpURL.substring(1) : ''
+  url += ((url.indexOf('?') < 0 ? '?' : (url.endsWith('&') ? '' : '&')) + params)
+  return url
+}
+
+/**
  * @param jsonObj
  * @returns {FormData}
  */

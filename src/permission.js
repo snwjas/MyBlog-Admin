@@ -24,8 +24,8 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasUserInfo = Object.keys(store.getters.user).length !== 0
-      const hasOptions = Object.keys(store.getters.options).length !== 0
+      const hasUserInfo = store.getters.user && Object.keys(store.getters.user).length !== 0
+      const hasOptions = store.getters.options && Object.keys(store.getters.options).length !== 0
       if (hasUserInfo && hasOptions) {
         next()
       } else {
@@ -55,6 +55,7 @@ router.beforeEach(async(to, from, next) => {
         await store.dispatch('user/checkLogin')
         // logged in, get user info
         await store.dispatch('user/getInfo')
+        await store.dispatch('option/getOptions')
         next()
       } catch (error) {
         // Message.error(error || 'Has Error')

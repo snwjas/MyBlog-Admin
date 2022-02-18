@@ -5,13 +5,24 @@
         <el-form-item label="关键词：" prop="name">
           <el-input v-model="searchParams.name" placeholder="请输入关键词" />
         </el-form-item>
-        <el-form-item label="附件类型：" prop="mediaType">
-          <el-select v-model="searchParams.mediaType" style="width: 160px" placeholder="">
+        <el-form-item label="类型：" prop="mediaType">
+          <el-select v-model="searchParams.mediaType" style="width: 160px" filterable>
             <el-option
               v-for="(mediaType,index) in mediaTypeList"
               :key="index"
               :value="mediaType"
               :label="mediaType"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="分组：" prop="team">
+          <el-select v-model="searchParams.team" style="width: 200px" filterable default-first-option>
+            <el-option label="默认分组" value="" style="font-style: italic" />
+            <el-option
+              v-for="(item,index) in teamList"
+              :key="index"
+              :label="item"
+              :value="item"
             />
           </el-select>
         </el-form-item>
@@ -27,6 +38,27 @@
         批量操作
       </el-button>
       <span v-else>
+        <el-popover
+          placement="top-start"
+          title="移动到分组"
+          style="margin-left: 10px"
+          trigger="click"
+          @hide="batchMoveTeamName=''"
+        >
+          <el-select v-model="batchMoveTeamName" style="width: 200px" size="small" filterable allow-create default-first-option>
+            <el-option label="默认分组" value="" style="font-style: italic" />
+            <el-option
+              v-for="(item,index) in teamList"
+              :key="index"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+          <div style="text-align:right;margin-top: 10px;">
+            <el-button type="primary" size="small" @click="batchMoveTeam">保存</el-button>
+          </div>
+          <el-button slot="reference" type="info" size="small" icon="el-icon-folder">分组</el-button>
+        </el-popover>
         <el-popconfirm
           placement="top-start"
           confirm-button-text="确定"
@@ -34,17 +66,17 @@
           icon="el-icon-info"
           icon-color="red"
           :title="`您要永久删除这些附件吗？`"
-          style="margin: 0 10px"
+          style="margin-left: 10px"
           @confirm="deleteAttachments"
         >
           <el-button slot="reference" type="danger" size="small" icon="el-icon-delete">删 除</el-button>
         </el-popconfirm>
-        <el-button size="small" icon="el-icon-close" @click="cancelBatchDelete">取 消</el-button>
+        <el-button size="small" icon="el-icon-close" style="margin-left: 10px" @click="cancelBatchDelete">取 消</el-button>
       </span>
     </div>
     <div>
       <v-empty-data v-if="attachmentList.length===0" style="width: 100px" />
-      <el-checkbox-group v-model="deleteIds">
+      <el-checkbox-group v-model="batchIds">
         <el-row v-loading="listLoading" :gutter="20">
           <el-col v-for="(attachment,index) in attachmentList" :key="attachment.id" :xs="6" :sm="4">
             <div class="attachment-item">
@@ -64,7 +96,7 @@
       </el-checkbox-group>
     </div>
     <!-- 分页 -->
-    <div style="margin-top: 20px;text-align: center">
+    <div v-if="total > 0" style="margin-top: 20px;text-align: center">
       <el-pagination
         background
         layout="prev, pager, next"
@@ -100,7 +132,7 @@
 </template>
 
 <script>
-import { listAttachments, listAllMediaTypes, deleteAttachment, deleteAttachments } from '@/api/attachment'
+import { deleteAttachment, deleteAttachments, listAllMediaTypes, listAllTeams, listAttachments, updateTeam } from '@/api/attachment'
 
 export default {
   name: 'Attachment',
@@ -116,17 +148,20 @@ export default {
         current: 1,
         pageSize: 18,
         name: '',
-        mediaType: null
+        mediaType: null,
+        team: null
       },
       total: 0,
       mediaTypeList: [],
+      teamList: [],
       attachmentList: [],
-      deleteIds: [],
+      batchIds: [],
       listLoading: false,
       detailDrawer: false,
       uploadDialog: false,
       batchOperation: false,
-      currentIndex: 0
+      currentIndex: 0,
+      batchMoveTeamName: ''
     }
   },
   computed: {
@@ -139,6 +174,7 @@ export default {
   },
   created() {
     this.getMediaTypeList()
+    this.getTeamList()
     this.getAttachmentList()
   },
   methods: {
@@ -158,17 +194,17 @@ export default {
     // 选择删除的附件
     batchDeleteChecked(index) {
       const id = this.attachmentList[index].id
-      const itemIdx = this.deleteIds.indexOf(id)
+      const itemIdx = this.batchIds.indexOf(id)
       if (itemIdx < 0) {
-        this.deleteIds.push(id)
+        this.batchIds.push(id)
       } else {
-        this.deleteIds.splice(itemIdx, 1)
+        this.batchIds.splice(itemIdx, 1)
       }
     },
     // 取消批量操作
     cancelBatchDelete() {
       this.batchOperation = !this.batchOperation
-      this.deleteIds = []
+      this.batchIds = []
     },
     // 获取附件列表信息
     getAttachmentList() {
@@ -183,8 +219,14 @@ export default {
     },
     // 获取所有文件类型
     getMediaTypeList() {
-      listAllMediaTypes(this.searchParams).then(resp => {
+      listAllMediaTypes().then(resp => {
         this.mediaTypeList = resp.data
+      })
+    },
+    // 获取所有文件分组
+    getTeamList() {
+      listAllTeams().then(resp => {
+        this.teamList = resp.data.filter((t) => { return !!t })
       })
     },
     // 删除单个附件
@@ -198,11 +240,22 @@ export default {
     },
     // 批量删除附件
     deleteAttachments() {
-      if (this.deleteIds.length < 1) {
+      if (this.batchIds.length < 1) {
         this.$message.info('您未选择附件')
         return
       }
-      deleteAttachments(this.deleteIds).then(resp => {
+      deleteAttachments(this.batchIds).then(resp => {
+        this.batchOperation = false
+        this.$message.success(resp.message)
+        this.getAttachmentList()
+      })
+    },
+    batchMoveTeam() {
+      if (this.batchIds.length < 1) {
+        this.$message.info('您未选择附件')
+        return
+      }
+      updateTeam({ ids: this.batchIds, team: this.batchMoveTeamName }).then(resp => {
         this.batchOperation = false
         this.$message.success(resp.message)
         this.getAttachmentList()
@@ -240,12 +293,12 @@ export default {
   .img {
     border-radius: 5px;
     overflow: hidden;
+    transition: all .3s ease;
 
     &:hover {
       cursor: pointer;
-      box-shadow: 0 3px 18px rgba(0, 0, 0, .2);
+      box-shadow: 0 3px 18px rgba(0, 0, 0, .3);
       transform: translateY(-2px);
-      transition: all .3s;
     }
   }
 
