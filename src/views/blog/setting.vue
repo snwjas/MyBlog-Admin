@@ -69,6 +69,7 @@
 <script>
 import { listAllCategory } from '@/api/category'
 import { listAllTags } from '@/api/tag'
+import { deepClone } from '@/utils'
 
 export default {
   name: 'SettingDrawer',
@@ -100,7 +101,7 @@ export default {
   },
   methods: {
     setData(data) {
-      this.blogData = JSON.parse(JSON.stringify(data))
+      this.blogData = deepClone(data)
       if (!this.blogData.category) {
         this.blogData.category = { id: null, name: '' }
       }
@@ -124,7 +125,7 @@ export default {
           this.blogData.tags.push({ name: tagId })
         }
       }
-      return this.blogData
+      return deepClone(this.blogData)
     },
     selectAttachment() {
       this.$emit('attachmentSelected')

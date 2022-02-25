@@ -55,8 +55,9 @@
 </template>
 
 <script>
-import { getBlog, addBlog } from '@/api/blog'
+import { addBlog, getBlog, updateBlog } from '@/api/blog'
 import { uploadAttachment } from '@/api/attachment'
+import { deepClone } from '@/utils'
 
 export default {
   name: 'WriteBlog',
@@ -83,6 +84,11 @@ export default {
         tags: [],
         allowComment: 'ALLOWED_AUDITING'
       }
+    }
+  },
+  computed: {
+    isUpdate: function() {
+      return Object.prototype.toString.call(this.blogData) === '[object Object]' && this.blogData.id
     }
   },
   watch: {
@@ -169,18 +175,34 @@ export default {
     // 发表博客
     addBlog() {
       const blogData = this.$refs.publishDrawer.getData()
-      addBlog(blogData).then(resp => {
-        this.$message.success(resp.message)
-        this.$router.push({ name: 'BlogList' })
-      })
+      if (this.isUpdate) {
+        blogData.status = 'PUBLISHED'
+        updateBlog(blogData).then(resp => {
+          this.$message.success(resp.message)
+          this.$router.push({ name: 'BlogList' })
+        })
+      } else {
+        addBlog(blogData).then(resp => {
+          this.$message.success(resp.message)
+          this.$router.push({ name: 'BlogList' })
+        })
+      }
     },
     // 保存草稿
     saveDraft() {
-      this.blogData.status = 'DRAFT'
-      addBlog(this.blogData).then(resp => {
-        this.$message.success(resp.message)
-        this.$router.push({ name: 'BlogList' })
-      })
+      const blogData = deepClone(this.blogData)
+      blogData.status = 'DRAFT'
+      if (this.isUpdate) {
+        updateBlog(blogData).then(resp => {
+          this.$message.success(resp.message)
+          this.$router.push({ name: 'BlogList' })
+        })
+      } else {
+        addBlog(blogData).then(resp => {
+          this.$message.success(resp.message)
+          this.$router.push({ name: 'BlogList' })
+        })
+      }
     }
   }
 }
