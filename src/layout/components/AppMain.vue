@@ -4,7 +4,7 @@
       <router-view :key="key" style="flex: 1" />
     </transition>
     <div class="footer">
-      Powered by <a href="http://snwjas.xyz" target="_blank">Myles.Yang</a>
+      Powered by <a href="https://refrain.xyz" target="_blank">Myles Yang</a>
     </div>
   </section>
 </template>

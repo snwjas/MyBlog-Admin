@@ -22,12 +22,17 @@
 
 <script>
 import { updateProfile } from '@/api/user'
-import { mapGetters } from 'vuex'
+import { deepClone } from '@/utils'
 
 export default {
   name: 'RProfile',
-  computed: {
-    ...mapGetters(['user'])
+  data() {
+    return {
+      user: {}
+    }
+  },
+  created() {
+    this.user = deepClone(this.$store.getters.user)
   },
   methods: {
     updateProfile() {

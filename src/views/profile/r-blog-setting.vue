@@ -47,7 +47,8 @@
 </template>
 
 <script>
-import { listAllOptions, updateOptions } from '@/api/option'
+import { updateOptions } from '@/api/option'
+import { deepClone } from '@/utils'
 
 export default {
   name: 'RBlogSetting',
@@ -64,7 +65,7 @@ export default {
     }
   },
   created() {
-    this.listAllOptions()
+    this.options = deepClone(this.$store.getters.options)
   },
   methods: {
     updateLogo(data) {
@@ -77,15 +78,9 @@ export default {
       this.selectFaviconDrawer = false
       this.addUpdateOption('favicon')
     },
-    listAllOptions() {
-      listAllOptions().then(resp => {
-        this.options = resp.data
-      })
-    },
     updateOption() {
       updateOptions(this.updateOptions).then(resp => {
         this.$message.success(resp.message)
-        this.listAllOptions()
         this.$store.dispatch('option/getOptions')
       })
     },

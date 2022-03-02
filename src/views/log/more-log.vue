@@ -4,7 +4,19 @@
     direction="rtl"
     title="操作日志"
   >
-    <v-log-list :log-list="logList" style="padding: 0 20px" />
+    <div style="margin: 0 0 20px 20px;">
+      操作类型：
+      <el-select v-model="searchParams.types" multiple filterable collapse-tags size="mini" placeholder="请选择操作类型">
+        <el-option
+          v-for="(value, key, index) in logTypes"
+          :key="index"
+          :label="value"
+          :value="key"
+        />
+      </el-select>
+      <el-button style="margin-left: 30px;" type="primary" size="mini" @click="getLogList">查询</el-button>
+    </div>
+    <v-log-list ref="logList" :log-list="logList" style="padding: 0 20px" />
     <div class="pagination">
       <el-pagination
         background
@@ -48,16 +60,27 @@ export default {
       total: 0,
       searchParams: {
         current: 1,
-        pageSize: 10
+        pageSize: 10,
+        types: []
+      },
+      logTypes: {
+        COMMON: '普通操作',
+        LOGGED_IN: '用户登入',
+        LOGGED_OUT: '用户登出',
+        LOGIN_FAILED: '登入失败',
+        PASSWORD_UPDATED: '密码更新',
+        PROFILE_UPDATED: '资料更新',
+        BLOG_PUBLISHED: '文章发表',
+        BLOG_EDITED: '文章编辑',
+        BLOG_DELETED: '文章删除',
+        OPTION_UPDATE: '设置更新'
       }
     }
-  },
-  created() {
-    this.getLogList()
   },
   methods: {
     openDrawer() {
       this.drawerVisible = true
+      this.getLogList()
     },
     getLogList() {
       listLogs(this.searchParams).then(resp => {

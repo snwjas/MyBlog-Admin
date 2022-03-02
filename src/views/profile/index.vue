@@ -43,6 +43,11 @@
               <span slot="label"><i class="tabs-icon el-icon-setting" />博客设置</span>
               <v-r-blog-setting />
             </el-tab-pane>
+            <!-- 特殊清单 -->
+            <el-tab-pane :lazy="true">
+              <span slot="label"><i class="tabs-icon el-icon-tickets" />特殊清单</span>
+              <v-r-speciallist />
+            </el-tab-pane>
           </el-tabs>
         </el-card>
       </el-col>
@@ -60,7 +65,8 @@ export default {
     'v-l-log-more': () => import('@/views/log/more-log'),
     'v-r-profile': () => import('@/views/profile/r-profile'),
     'v-r-password': () => import('@/views/profile/r-password'),
-    'v-r-blog-setting': () => import('@/views/profile/r-blog-setting')
+    'v-r-blog-setting': () => import('@/views/profile/r-blog-setting'),
+    'v-r-speciallist': () => import('@/views/speciallist/index')
   },
   data() {
     return {}
