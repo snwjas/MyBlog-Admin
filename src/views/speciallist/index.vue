@@ -83,7 +83,9 @@
       <div style="margin-top:10px;">已输入 {{ addNum }} 条词条</div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="addDialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="addBatch">保 存</el-button>
+        <el-button size="small" type="primary" :loading="addingLoading" @click="addBatch">
+          {{ addingLoading?'保 存 中':'保 存' }}
+        </el-button>
       </span>
     </el-dialog>
   </div>
@@ -111,7 +113,8 @@ export default {
       addDialogVisible: false,
       addType: '',
       addContents: '',
-      addNum: 0
+      addNum: 0,
+      addingLoading: false
     }
   },
   created() {
@@ -176,15 +179,19 @@ export default {
         this.$message.warning('请输入导入词条')
         return
       }
+      this.addingLoading = true
       addSpeciallistBatch({
         type: this.addType,
         content: this.addContents.trim().split('\n')
       }).then(resp => {
         this.$message.success(resp.message)
+        this.addingLoading = false
         this.addDialogVisible = false
         this.addType = ''
         this.addContents = ''
         this.addNum = 0
+      }).catch(() => {
+        this.addingLoading = false
       })
     },
     refreshContext(val) {

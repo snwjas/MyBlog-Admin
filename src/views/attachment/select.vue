@@ -151,12 +151,12 @@ export default {
   .img {
     border-radius: 5px;
     overflow: hidden;
+    transition: all .3s;
 
     &:hover {
       cursor: pointer;
       box-shadow: 0 3px 18px rgba(0, 0, 0, .2);
       transform: translateY(-2px);
-      transition: all .3s;
     }
   }
 
